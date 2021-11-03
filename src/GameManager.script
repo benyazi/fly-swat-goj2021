@@ -1,0 +1,68 @@
+local monarch = require "monarch.monarch"
+DataManager = require "src.managers.DataManager"
+local camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+
+-- MapManager = require "src.managers.MapManager"
+-- InventoryManager = require "src.managers.InventoryManager"
+-- OrderManager = require "src.managers.OrderManager"
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("#", "SHOW_MAIN_MENU")
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+	msg.post("@render:", "clear_color", { color = vmath.vector4(0.15, 0.38, 0.05, 0) } )
+	self.prev_screen = nil
+	self.current_screen = nil
+	go.set_position(vmath.vector3(), CAMERA_ID)
+end
+
+function sceneLoaded(self, name)
+	self.prev_screen = self.current_screen
+	self.current_screen = name
+	if name == "screen_game_over" then 
+		--clear managers
+		-- OrderManager.resetAllData()
+		-- MapManager.resetAllData()
+		-- InventoryManager.resetAllData()
+	end
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("SHOW_MAIN_MENU") then
+		print('SHOWING MAIN MENU')
+		monarch.show("main_menu")
+		self.prev_screen = "main_menu"
+	elseif message_id == hash("SHOW_START_GAME") then
+		print('SHOWING SHOW_START_GAME')
+		DataManager.setCurrentScene("screen_main_game")
+		monarch.replace("main_game", nil, nil, function()
+			sceneLoaded(self, "main_game")
+		end)
+	end
+
+	if message_id == monarch.FOCUS.GAINED then
+		print("Focus gained, previous screen: ", message.id)
+	elseif message_id == monarch.FOCUS.LOST then
+		print("Focus lost, next screen: ", message.id)
+	end
+end
+
+function on_input(self, action_id, action)
+	
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

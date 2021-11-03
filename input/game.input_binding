@@ -1,0 +1,84 @@
+key_trigger {
+  input: KEY_SPACE
+  action: "ACTION_SPACE"
+}
+key_trigger {
+  input: KEY_A
+  action: "LEFT"
+}
+key_trigger {
+  input: KEY_D
+  action: "RIGHT"
+}
+key_trigger {
+  input: KEY_S
+  action: "DOWN"
+}
+key_trigger {
+  input: KEY_W
+  action: "TOP"
+}
+key_trigger {
+  input: KEY_F
+  action: "SHOOT"
+}
+key_trigger {
+  input: KEY_E
+  action: "ACTION"
+}
+key_trigger {
+  input: KEY_Q
+  action: "ACTION2"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "ESC"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "ACTION"
+}
+key_trigger {
+  input: KEY_1
+  action: "INV_1"
+}
+key_trigger {
+  input: KEY_2
+  action: "INV_2"
+}
+key_trigger {
+  input: KEY_3
+  action: "INV_3"
+}
+key_trigger {
+  input: KEY_4
+  action: "INV_4"
+}
+key_trigger {
+  input: KEY_5
+  action: "INV_5"
+}
+key_trigger {
+  input: KEY_6
+  action: "INV_6"
+}
+key_trigger {
+  input: KEY_R
+  action: "BTN_R"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "ACTION_ESC"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_LEFT
+  action: "touch"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_LEFT
+  action: "mouse_button_left"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_RIGHT
+  action: "MOUSE_RIGHT"
+}

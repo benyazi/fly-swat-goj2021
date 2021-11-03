@@ -1,0 +1,64 @@
+local camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+local ACTION_TOUCH = hash('touch')
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.startPoint = vmath.vector3()
+	self.finishPoint = vmath.vector3()
+	self.mousePosition = vmath.vector3()
+	self.calculateStarted = false
+
+	self.reloadTimer = nil 
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function releaseMouse(self)
+	
+end
+
+function on_input(self, action_id, action)
+	local coord = vmath.vector3(action.x, action.y, 0)
+	-- coord = vmath.vector3(action.screen_x, action.screen_y, 0)
+	self.mousePosition = camera.screen_to_world(CAMERA_ID, coord)
+	-- print('x = ' .. self.mousePosition.x .. ' y = ' .. self.mousePosition.y)
+
+	if action_id == ACTION_TOUCH and self.reloadTimer == nil then 
+		if action.pressed then 
+			print('PRESSED AT x = ' .. self.mousePosition.x .. ' y = ' .. self.mousePosition.y)
+			self.startPoint.x = self.mousePosition.x
+			self.startPoint.y = self.mousePosition.y
+			self.calculateStarted = true
+		elseif action.released and self.calculateStarted then 
+			print('RELEASED AT x = ' .. self.mousePosition.x .. ' y = ' .. self.mousePosition.y)
+			self.finishPoint.x = self.mousePosition.x
+			self.finishPoint.y = self.mousePosition.y
+			self.calculateStarted = false
+			releaseMouse(self)
+		end
+	end
+	
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

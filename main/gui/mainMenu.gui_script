@@ -1,0 +1,88 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+	self.mousePos = vmath.vector3(0,0,0)
+	self.btns = {}
+	-- self.btns[1] = {
+	-- 	node = gui.get_node('start_btn'),
+	-- 	type = 'start',
+	-- 	isHover = true
+	-- }
+	-- gui.play_flipbook(self.btns[1].node, "start2")
+	-- gui.set_color(self.btns[1].node, vmath.vector3(1, 0, 0))
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	
+end
+
+function checkHover(self, action)
+	if self.mousePos.x ~= action.x or self.mousePos.y ~= action.y then 
+		for i, btn in pairs(self.btns) do
+			if gui.pick_node(btn.node, self.mousePos.x, self.mousePos.y) then 
+				if btn.isHover ~= true then 
+					self.btns[i].isHover = true
+					-- gui.set_color(btn.node, vmath.vector3(1, 0, 0))
+					-- gui.set_texture(btn.node, "start2")
+					gui.play_flipbook(btn.node, "start2")
+					msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "button_hovered"})
+				end
+			else
+				if btn.isHover then 
+					self.btns[i].isHover = false
+					-- gui.set_color(btn.node, vmath.vector3(1, 1, 1))
+					-- gui.set_texture(btn.node, "start1")
+					gui.play_flipbook(btn.node, "start1")
+				end
+			end
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+end
+
+function checkClick(self)
+	for i, btn in pairs(self.btns) do
+		if gui.pick_node(btn.node, self.mousePos.x, self.mousePos.y) then 
+			if btn.type == 'start' then 
+				-- msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "ui_start"})
+				msg.post('main:/collection_manager#GameManager', 'SHOW_START_GAME')
+			end
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	checkHover(self, action)
+	self.mousePos.x = action.x
+	self.mousePos.y = action.y
+	if action_id == hash("touch") and action.pressed then
+		checkClick(self)
+	end
+	
+	if action_id == hash('ACTION_SPACE') and action.pressed then 
+		msg.post('main:/collection_manager#GameManager', 'SHOW_START_GAME')
+		-- for i, btn in pairs(self.btns) do
+		-- 	if btn.isHover then 
+		-- 		if btn.type == 'start' then 
+		-- 			msg.post('main:/collection_manager#GameManager', 'SHOW_START_GAME')
+		-- 		end
+		-- 	end
+		-- end
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

@@ -1,0 +1,66 @@
+local camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+local MSG_UPDATE_ROTATION = hash('UPDATE_ROTATION')
+local MSG_SET_POSITION = hash('SET_POSITION')
+local MSG_SHOW = hash('SHOW')
+local MSG_HIDE = hash('HIDE')
+
+local SCALE_MAX = 4
+local SCALE_MIN = 0.2
+
+function init(self)
+	
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_SHOW then 
+		msg.post("#sprite", "enable")
+	end
+	if message_id == MSG_HIDE then 
+		msg.post("#sprite", "disable")
+	end
+	
+	if message_id == MSG_SET_POSITION then 
+		local pos = message.pos 
+		-- pos.y = pos.y + 50
+		go.set_position(pos)
+	end
+	if message_id == MSG_UPDATE_ROTATION then 
+		local angle = message.angle
+		-- self.hand_angle = angle - math.rad(90)
+		go.set_rotation(vmath.quat_rotation_z(angle))
+		local dist = message.dist
+		--calc force 
+		local scale = dist / 100
+		if scale < SCALE_MIN then 
+			scale = SCALE_MIN
+		end
+		if scale > SCALE_MAX then 
+			scale = SCALE_MAX
+		end
+		local sc = vmath.vector3(1, scale, 1)
+		go.set_scale(sc)
+	end
+	
+end
+
+function on_input(self, action_id, action)
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

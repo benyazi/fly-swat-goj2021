@@ -1,0 +1,136 @@
+function init(self)
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+	self.gain = 2
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash('stop_sound_effect') then 
+		if message.sound == 'play_main_theme' then 
+			sound.stop('/sound_effect_manager#main_theme_1')
+		end
+		if message.sound == 'win_finale' then 
+			sound.stop('/sound_effect_manager#win_finale')
+		end
+	end
+	if message_id == hash('play_sound_effect') then 
+		if message.sound == 'button_hovered' then 
+			-- sound.play('/sound_effect_manager#btn_hover')
+			playSound(self, '/sound_effect_manager#ui_hover')
+		end
+		if message.sound == 'delete_space' then 
+			playSound(self, '/sound_effect_manager#ground_deleted')
+		end
+		if message.sound == 'ui_start' then 
+			playSound(self, '/sound_effect_manager#ui_start')
+		end
+		if message.sound == 'win_finale' then 
+			playSound(self, '/sound_effect_manager#win_finale')
+		end
+		if message.sound == 'policeman_step' then 
+			-- sound.play('/sound_effect_manager#policeman_step')
+			-- playSound(self, '/sound_effect_manager#slave_step')
+			if message.isWater then 
+				playSound(self, '/sound_effect_manager#step_w')
+			else
+				playSound(self, '/sound_effect_manager#step_d')
+			end
+		end
+		if message.sound == 'order_completed' then 
+			playSound(self, '/sound_effect_manager#order_completed')
+		end
+		if message.sound == 'anger' then 
+			playSound(self, '/sound_effect_manager#ui_anger')
+		end
+		if message.sound == 'ground_deleted' then 
+			playSound(self, '/sound_effect_manager#ground_deleted')
+		end
+		if message.sound == 'plant_planted' then 
+			local index = 1
+			if message.index then 
+				index = message.index
+			end
+			if message.productType == 'Kabut' then 
+				index = 2
+			elseif message.productType == 'Sample' then 
+				index = 3
+			end
+			local soundName = 'plant_planted_' .. index
+			-- soundName = 'plant_ceed_new'
+			local opt = {
+				gain = rnd.double_range(0.7, 1.1),
+				speed = rnd.double_range(0.7, 1.1)
+			}
+			playSound(self, '/sound_effect_manager#' .. soundName, opt)
+		end
+		if message.sound == 'plant_picked_up' then 
+			soundName = 'plant_ceed_new'
+			local opt = {
+				gain = rnd.double_range(0.7, 1.1),
+				speed = rnd.double_range(0.7, 1.1)
+			}
+			playSound(self, '/sound_effect_manager#' .. soundName, opt)
+		end
+		if message.sound == 'plant_ceed' then 
+			rnd.seed()
+			local index = 1
+			if message.index then 
+				index = message.index
+			end
+			if message.productType == 'Kabut' then 
+				index = 2
+			elseif message.productType == 'Sample' then 
+				index = 3
+			end
+			local soundName = 'plant_ceed_' .. index
+			-- soundName = 'plant_ceed_new'
+			local opt = {
+				gain = rnd.double_range(0.9, 1.1),
+				speed = rnd.double_range(0.9, 1.1)
+			}
+			playSound(self, '/sound_effect_manager#' .. soundName, opt)
+		end
+		if message.sound == 'play_main_theme' then 
+			playSound(self, '/sound_effect_manager#main_theme_1')
+		end
+	end
+end
+
+function playSound(self, url, opt)
+	if opt then 
+		sound.play(url, opt)
+	else
+		sound.play(url, {gain = self.gain})
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

@@ -1,0 +1,6 @@
+camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+
+function init(self)
+	msg.post(CAMERA_ID, "zoom_to", { zoom = 8 })
+end
