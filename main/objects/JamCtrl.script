@@ -7,6 +7,10 @@ function init(self)
 	self.directionIndex = 0
 	self.directions = {}
 	self.speed = 50
+	
+	self.eatedLevel = 100
+	self.flyCount = 0
+	self.flies = {}
 end
 
 function final(self)
@@ -20,6 +24,10 @@ function update(self, dt)
 	local pos = go.get_position()
 	pos = pos + vec * self.speed * dt 
 	go.set_position(pos)
+
+	if self.flyCount > 0 and self.eatedLevel > 0 then 
+		self.eatedLevel = self.eatedLevel - 5 * dt * self.flyCount
+	end
 end
 
 function damage(self)
@@ -39,16 +47,11 @@ function destroy(self)
 	go.delete()
 end
 
-local MSG_TRIGGER = hash("trigger_response")
-local TRIGGER_GROUP_SWAT = hash('swat')
-local TRIGGER_GROUP_FOOD = hash('food')
-local TRIGGER_GROUP_LINE = hash('line')
-local TRIGGER_GROUP_FOOD_DONE = hash('food_done')
 
 function setDirection(self, other_id)
 	-- local rotation = go.get_rotation(other_id)
 	local rot = go.get(other_id, "euler.z")
-	pprint(rot)
+	-- pprint(rot)
 	local dir = vmath.vector3(0, -1, 0)
 	if rot == 90 then 
 		dir = vmath.vector3(1, 0, 0)
@@ -82,11 +85,30 @@ function setDirectionUnactive(self, other_id)
 	end
 end
 
+local MSG_TRIGGER = hash("trigger_response")
+local TRIGGER_GROUP_SWAT = hash('swat')
+local TRIGGER_GROUP_FOOD = hash('food')
+local TRIGGER_GROUP_LINE = hash('line')
+local TRIGGER_GROUP_FOOD_DONE = hash('food_done')
+local TRIGGER_GROUP_FLY = hash('fly')
+
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
 		
 		if message.group == TRIGGER_GROUP_SWAT and message.enter then
 			damage(self) 
+		end
+		
+		if message.group == TRIGGER_GROUP_FLY and message.enter then
+			self.flyCount = self.flyCount + 1
+			self.flies[message.other_id] = message.other_id
+		end
+		
+		if message.group == TRIGGER_GROUP_FLY and message.enter == false then
+			self.flyCount = self.flyCount - 1
+			if self.flies[message.other_id] then 
+				self.flies[message.other_id] = nil
+			end
 		end
 
 		if message.group == TRIGGER_GROUP_LINE and message.own_group == TRIGGER_GROUP_FOOD and message.enter then
@@ -98,13 +120,28 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if message.group == TRIGGER_GROUP_FOOD_DONE and message.own_group == TRIGGER_GROUP_FOOD and message.enter then
-			destroy(self)
+			foodDone(self)
 		end
 
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/
 	-- Remove this function if not needed
+end
+
+function foodDone(self)
+	local data = {
+		eaterLevel = self.eatedLevel,
+		state = self.state
+	}
+	-- print("DONE")
+	-- pprint(data)
+	
+	DataManager.foodDone(data)
+	for k, v in pairs(self.flies) do
+		msg.post(v, 'FOOD_REMOVED')
+	end
+	destroy(self)
 end
 
 function on_input(self, action_id, action)

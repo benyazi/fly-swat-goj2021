@@ -106,20 +106,26 @@ function destroy(self)
 	go.delete()
 end
 
-function runAwayFromSwat(self)
+function runAwayFromSwat(self, random)
 	self.target = nil 
 	self.targetOffset = vmath.vector3()
 	self.unEaterTimer = 2
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil
-
+	
+	local dist = 800
 	local pushPos = go.get_position('/FlySwapPush')
+	if random then 
+		dist = 400
+		pushPos.x = rnd.double_range(MIX_X, MAX_X)
+		pushPos.y = rnd.double_range(MIX_Y, MAX_Y)
+	end
+	
 	local pos = go.get_position()
 
 	local angle = math.atan2(pos.x - pushPos.x, pushPos.y - pos.y)
 	local dx = pushPos.x - pos.x
 	local dy = pushPos.y - pos.y
-	local dist = 800--math.sqrt(dx*dx+dy*dy) * 2
 
 	angle = angle - math.rad(90)
 	local vec = vmath.vector3(dist, 0, 0)
@@ -145,6 +151,7 @@ local TRIGGER_GROUP_SWAT = hash('swat')
 local TRIGGER_GROUP_SWAT_SOUND = hash('swatSound')
 local TRIGGER_GROUP_JAM = hash('jam')
 local MSG_KILL = hash("KILL_FLY")
+local MSG_FOOD_REMOVED = hash('FOOD_REMOVED')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
@@ -175,6 +182,9 @@ function on_message(self, message_id, message, sender)
 		sprite.set_vflip('#sprite', true)
 		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
 		msg.post('/FlyGenerator', 'FLY_KILLED')
+	end
+	if message_id == MSG_FOOD_REMOVED then
+		runAwayFromSwat(self, true)
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

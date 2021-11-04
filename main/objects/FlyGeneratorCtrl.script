@@ -6,34 +6,59 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.flyCount = 0
 	self.flyStart = 10
+
+	self.waveCount = 1
+	self.waveData = {}
+	self.waveData[1] = {
+		flies = 10
+	}
+	self.waveData[2] = {
+		flies = 15
+	}
+	self.waveData[3] = {
+		flies = 25
+	}
+	
 	generateFlies(self)
 end
 
 function generateFlies(self)
+	msg.post('/swatGui#Swat', 'UPDATE_WAVE', {count = self.waveCount})
 	local viewport = camera.get_viewport(CAMERA_ID)
-	pprint(viewport)
+	-- pprint(viewport)
 	local minX = viewport.x - viewport.z/2
 	local maxX = viewport.x + viewport.z/2
 	local minY = viewport.y - viewport.w/2
 	local maxY = viewport.y + viewport.w/2
 	-- print('' .. x .. ' - '.. y.. ' - '..w.. ' - '..h ..'')
-	for i = 1, self.flyStart do
+	-- pprint(self.waveData)
+	for i = 1, self.waveData[self.waveCount].flies do
 		rnd.seed()
 		local pos = vmath.vector3()
 		pos.x = rnd.double_range(minX, maxX)
 		pos.y = rnd.double_range(minY, maxY)
 		pos.z = 0.1
-		-- local coord = vmath.vector3(action.x, action.y, 0)
-		-- local pos = camera.screen_to_world(CAMERA_ID, coord)
-		local fly = factory.create('#factory', pos)
-		
+		local fly = factory.create('#factory', pos)		
 		updateFlyCount(self, 1)
+	end
+end
+
+function newWave(self)
+	self.waveCount = self.waveCount + 1
+	if self.waveData[self.waveCount] then 
+		generateFlies(self)
+	else
+		-- DONE
 	end
 end
 
 function updateFlyCount(self, diff)
 	self.flyCount =  self.flyCount + diff
 	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
+
+	if self.flyCount <= 0 then 
+		newWave(self)
+	end
 end
 
 function final(self)

@@ -37,10 +37,20 @@ function update(self, dt)
 end
 
 local MSG_UPDATE_FLY_COUNT = hash('UPDATE_FLY_COUNT')
+local MSG_UPDATE_POINTS = hash('UPDATE_POINTS')
+local MSG_UPDATE_WAVE = hash('UPDATE_WAVE')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_UPDATE_FLY_COUNT then 
 		local node = gui.get_node('flyCount')
+		gui.set_text(node, message.count)
+	end
+	if message_id == MSG_UPDATE_POINTS then 
+		local node = gui.get_node('points')
+		gui.set_text(node, message.points)
+	end
+	if message_id == MSG_UPDATE_WAVE then 
+		local node = gui.get_node('wave')
 		gui.set_text(node, message.count)
 	end
 	-- Add message-handling code here

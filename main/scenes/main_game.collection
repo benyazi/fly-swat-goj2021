@@ -177,7 +177,7 @@ instances {
   prototype: "/main/objects/FoodGenerator.go"
   position {
     x: 0.0
-    y: 0.0
+    y: 192.0
     z: 0.05
   }
   rotation {
@@ -233,51 +233,11 @@ instances {
   }
 }
 instances {
-  id: "LineSection6"
+  id: "LineSection8"
   prototype: "/main/objects/LineSection.go"
   position {
     x: 192.0
     y: -192.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 1.0
-    w: 6.123234E-17
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "LineSection7"
-  prototype: "/main/objects/LineSection.go"
-  position {
-    x: 192.0
-    y: -128.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.70710677
-    w: 0.70710677
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "LineSection8"
-  prototype: "/main/objects/LineSection.go"
-  position {
-    x: 256.0
-    y: -128.0
     z: 0.0
   }
   rotation {
@@ -296,8 +256,8 @@ instances {
   id: "LineSection9"
   prototype: "/main/objects/LineSection.go"
   position {
-    x: 256.0
-    y: -192.0
+    x: 192.0
+    y: -256.0
     z: 0.0
   }
   rotation {
@@ -316,8 +276,8 @@ instances {
   id: "FoodDone"
   prototype: "/main/objects/FoodDone.go"
   position {
-    x: 256.0
-    y: -256.0
+    x: 192.0
+    y: -320.0
     z: 0.0
   }
   rotation {
@@ -325,6 +285,146 @@ instances {
     y: 0.0
     z: 0.0
     w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection6"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -64.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.70710677
+    w: 0.70710677
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection7"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -128.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.70710677
+    w: 0.70710677
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection10"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -128.0
+    y: 64.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection11"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -128.0
+    y: 128.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection12"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -128.0
+    y: 192.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection13"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: -64.0
+    y: 192.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: -0.70710677
+    w: 0.70710677
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "LineSection14"
+  prototype: "/main/objects/LineSection.go"
+  position {
+    x: 0.0
+    y: 192.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: -0.70710677
+    w: 0.70710677
   }
   scale3 {
     x: 1.0

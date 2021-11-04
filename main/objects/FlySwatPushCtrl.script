@@ -39,7 +39,7 @@ function update(self, dt)
 				count = count +1
 				msg.post(v, 'KILL_FLY')
 			end
-			print("FLIES COUNT = " .. count)
+			-- print("FLIES COUNT = " .. count)
 			self.flies = {}
 			self.checkCollisions = false
 			if count > 0 then 
