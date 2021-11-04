@@ -14,6 +14,7 @@ function init(self)
 
 	generatePath(self, false)
 	run(self)
+	sound.play('#sound')
 end
 
 local MIX_X = -450 
@@ -126,17 +127,19 @@ local MSG_TRIGGER = hash("trigger_response")
 local TRIGGER_GROUP_SWAT = hash('swat')
 local TRIGGER_GROUP_SWAT_SOUND = hash('swatSound')
 local TRIGGER_GROUP_JAM = hash('jam')
+local MSG_KILL = hash("KILL_FLY")
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
 
 		if message.group == TRIGGER_GROUP_SWAT and self.killed == false then 
-			self.killed = true
-			go.cancel_animations(go.get_id(), "position")
-			sprite.play_flipbook('#sprite', hash('FlyDied'))
-			sprite.set_vflip('#sprite', true)
-			go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
-			msg.post('/FlyGenerator', 'FLY_KILLED')
+			-- self.killed = true
+			-- sound.stop('#sound')
+			-- go.cancel_animations(go.get_id(), "position")
+			-- sprite.play_flipbook('#sprite', hash('FlyDied'))
+			-- sprite.set_vflip('#sprite', true)
+			-- go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
+			-- msg.post('/FlyGenerator', 'FLY_KILLED')
 		end
 
 		if message.group == TRIGGER_GROUP_SWAT_SOUND and message.enter and self.killed == false then 
@@ -146,6 +149,15 @@ function on_message(self, message_id, message, sender)
 		if message.group == TRIGGER_GROUP_JAM and message.enter and self.killed == false and self.unEaterTimer == nil then 
 			eatJam(self)
 		end
+	end
+	if message_id == MSG_KILL then
+		self.killed = true
+		sound.stop('#sound')
+		go.cancel_animations(go.get_id(), "position")
+		sprite.play_flipbook('#sprite', hash('FlyDied'))
+		sprite.set_vflip('#sprite', true)
+		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
+		msg.post('/FlyGenerator', 'FLY_KILLED')
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

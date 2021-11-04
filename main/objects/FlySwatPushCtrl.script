@@ -12,6 +12,8 @@ local RELOAD_TIME = 0.25
 function init(self)
 	self.reloadTimer = nil
 	go.set_position(vmath.vector3(-1000,-1000,0))
+	self.checkCollisions = false
+	self.flies = {}
 end
 
 function final(self)
@@ -27,9 +29,40 @@ function update(self, dt)
 		self.reloadTimer = nil
 		go.set_position(vmath.vector3(-1000,-1000,0))
 	end
+
+	if self.checkCollisions then 
+		if self.checkCollisions > 0 then 
+			self.checkCollisions = self.checkCollisions - dt
+		else
+			local count = 0
+			for k, v in pairs(self.flies) do
+				count = count +1
+				msg.post(v, 'KILL_FLY')
+			end
+			print("FLIES COUNT = " .. count)
+			self.flies = {}
+			self.checkCollisions = false
+			if count > 0 then 
+				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "slap"})
+			else 
+				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "fail"})
+			end
+		end
+	end
 end
 
+local MSG_TRIGGER = hash("trigger_response")
+local TRIGGER_GROUP_FLY = hash('fly')
+local TRIGGER_GROUP_SWAT = hash('swat')
+
 function on_message(self, message_id, message, sender)
+	if message_id == MSG_TRIGGER then -- <2>
+		if message.group == TRIGGER_GROUP_FLY and message.own_group == TRIGGER_GROUP_SWAT and message.enter then 
+			self.flies[message.other_id] = message.other_id
+			-- print("FLIES = " .. #self.flies)
+		end
+	end
+	
 	if message_id == MSG_SHOW then 
 		msg.post("#sprite", "enable")
 	end
@@ -49,6 +82,7 @@ function on_message(self, message_id, message, sender)
 		pos = pos + vec2
 		go.set_position(pos)
 		self.reloadTimer = RELOAD_TIME
+		self.checkCollisions = 0.005
 	end
 	
 end

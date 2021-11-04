@@ -31,77 +31,11 @@ function on_message(self, message_id, message, sender)
 			-- sound.play('/sound_effect_manager#btn_hover')
 			playSound(self, '/sound_effect_manager#ui_hover')
 		end
-		if message.sound == 'delete_space' then 
-			playSound(self, '/sound_effect_manager#ground_deleted')
+		if message.sound == 'slap' then 
+			playSound(self, '/sound_effect_manager#s_slap')
 		end
-		if message.sound == 'ui_start' then 
-			playSound(self, '/sound_effect_manager#ui_start')
-		end
-		if message.sound == 'win_finale' then 
-			playSound(self, '/sound_effect_manager#win_finale')
-		end
-		if message.sound == 'policeman_step' then 
-			-- sound.play('/sound_effect_manager#policeman_step')
-			-- playSound(self, '/sound_effect_manager#slave_step')
-			if message.isWater then 
-				playSound(self, '/sound_effect_manager#step_w')
-			else
-				playSound(self, '/sound_effect_manager#step_d')
-			end
-		end
-		if message.sound == 'order_completed' then 
-			playSound(self, '/sound_effect_manager#order_completed')
-		end
-		if message.sound == 'anger' then 
-			playSound(self, '/sound_effect_manager#ui_anger')
-		end
-		if message.sound == 'ground_deleted' then 
-			playSound(self, '/sound_effect_manager#ground_deleted')
-		end
-		if message.sound == 'plant_planted' then 
-			local index = 1
-			if message.index then 
-				index = message.index
-			end
-			if message.productType == 'Kabut' then 
-				index = 2
-			elseif message.productType == 'Sample' then 
-				index = 3
-			end
-			local soundName = 'plant_planted_' .. index
-			-- soundName = 'plant_ceed_new'
-			local opt = {
-				gain = rnd.double_range(0.7, 1.1),
-				speed = rnd.double_range(0.7, 1.1)
-			}
-			playSound(self, '/sound_effect_manager#' .. soundName, opt)
-		end
-		if message.sound == 'plant_picked_up' then 
-			soundName = 'plant_ceed_new'
-			local opt = {
-				gain = rnd.double_range(0.7, 1.1),
-				speed = rnd.double_range(0.7, 1.1)
-			}
-			playSound(self, '/sound_effect_manager#' .. soundName, opt)
-		end
-		if message.sound == 'plant_ceed' then 
-			rnd.seed()
-			local index = 1
-			if message.index then 
-				index = message.index
-			end
-			if message.productType == 'Kabut' then 
-				index = 2
-			elseif message.productType == 'Sample' then 
-				index = 3
-			end
-			local soundName = 'plant_ceed_' .. index
-			-- soundName = 'plant_ceed_new'
-			local opt = {
-				gain = rnd.double_range(0.9, 1.1),
-				speed = rnd.double_range(0.9, 1.1)
-			}
-			playSound(self, '/sound_effect_manager#' .. soundName, opt)
+		if message.sound == 'fail' then 
+			playSound(self, '/sound_effect_manager#s_fail')
 		end
 		if message.sound == 'play_main_theme' then 
 			playSound(self, '/sound_effect_manager#main_theme_1')
