@@ -5,11 +5,11 @@ function init(self)
 	-- Remove this function if not needed
 	self.mousePos = vmath.vector3(0,0,0)
 	self.btns = {}
-	-- self.btns[1] = {
-	-- 	node = gui.get_node('start_btn'),
-	-- 	type = 'start',
-	-- 	isHover = true
-	-- }
+	self.btns[1] = {
+		node = gui.get_node('credits'),
+		type = 'start',
+		isHover = true
+	}
 	-- gui.play_flipbook(self.btns[1].node, "start2")
 	-- gui.set_color(self.btns[1].node, vmath.vector3(1, 0, 0))
 end
@@ -32,7 +32,7 @@ function checkHover(self, action)
 					self.btns[i].isHover = true
 					-- gui.set_color(btn.node, vmath.vector3(1, 0, 0))
 					-- gui.set_texture(btn.node, "start2")
-					gui.play_flipbook(btn.node, "start2")
+					-- gui.play_flipbook(btn.node, "start2")
 					msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "button_hovered"})
 				end
 			else
@@ -40,7 +40,7 @@ function checkHover(self, action)
 					self.btns[i].isHover = false
 					-- gui.set_color(btn.node, vmath.vector3(1, 1, 1))
 					-- gui.set_texture(btn.node, "start1")
-					gui.play_flipbook(btn.node, "start1")
+					-- gui.play_flipbook(btn.node, "start1")
 				end
 			end
 		end
