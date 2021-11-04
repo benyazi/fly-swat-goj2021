@@ -11,10 +11,11 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("#", "SHOW_MAIN_MENU")
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
-	msg.post("@render:", "clear_color", { color = vmath.vector4(0.15, 0.38, 0.05, 0) } )
+	-- msg.post("@render:", "clear_color", { color = vmath.vector4(0.15, 0.38, 0.05, 0) } )
+	msg.post("@render:", "clear_color", { color = vmath.vector4(0.76, 0.76, 0.76, 0) } )
 	self.prev_screen = nil
 	self.current_screen = nil
-	go.set_position(vmath.vector3(), CAMERA_ID)
+	-- go.set_position(vmath.vector3(), CAMERA_ID)
 end
 
 function sceneLoaded(self, name)

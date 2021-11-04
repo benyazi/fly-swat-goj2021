@@ -36,7 +36,13 @@ function update(self, dt)
 	end
 end
 
+local MSG_UPDATE_FLY_COUNT = hash('UPDATE_FLY_COUNT')
+
 function on_message(self, message_id, message, sender)
+	if message_id == MSG_UPDATE_FLY_COUNT then 
+		local node = gui.get_node('flyCount')
+		gui.set_text(node, message.count)
+	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/
 	-- Remove this function if not needed
@@ -59,7 +65,7 @@ function releaseMouse(self)
 		pos = self.startPoint
 	})
 end
-
+local ACTION_GENERATE = hash('MOUSE_RIGHT')
 function on_input(self, action_id, action)
 	local coord = vmath.vector3(action.x, action.y, 0)
 	-- coord = vmath.vector3(action.screen_x, action.screen_y, 0)
@@ -81,6 +87,12 @@ function on_input(self, action_id, action)
 			self.calculateStarted = false
 			releaseMouse(self)
 		end
+	end
+
+
+	if action_id == ACTION_GENERATE and action.pressed then 
+		-- local coord = vmath.vector3(action.x, action.y, 0)
+		-- gui.set_position(self.swatPoint, coord)
 	end
 end
 

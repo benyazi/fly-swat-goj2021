@@ -4,6 +4,34 @@ local CAMERA_ID = hash('/camera')
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	self.flyCount = 0
+	self.flyStart = 10
+	generateFlies(self)
+end
+
+function generateFlies(self)
+	local viewport = camera.get_viewport(CAMERA_ID)
+	pprint(viewport)
+	local minX = viewport.x - viewport.z/2
+	local maxX = viewport.x + viewport.z/2
+	local minY = viewport.y - viewport.w/2
+	local maxY = viewport.y + viewport.w/2
+	-- print('' .. x .. ' - '.. y.. ' - '..w.. ' - '..h ..'')
+	for i = 1, self.flyStart do
+		rnd.seed()
+		local pos = vmath.vector3()
+		pos.x = rnd.double_range(minX, maxX)
+		pos.y = rnd.double_range(minY, maxY)
+		-- local coord = vmath.vector3(action.x, action.y, 0)
+		-- local pos = camera.screen_to_world(CAMERA_ID, coord)
+		factory.create('#factory', pos)
+		updateFlyCount(self, 1)
+	end
+end
+
+function updateFlyCount(self, diff)
+	self.flyCount =  self.flyCount + diff
+	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
 end
 
 function final(self)
@@ -18,18 +46,24 @@ function update(self, dt)
 	-- Remove this function if not needed
 end
 
+local MSG_FLY_KILLED = hash('FLY_KILLED')
+
 function on_message(self, message_id, message, sender)
+	if message_id == MSG_FLY_KILLED then 
+		updateFlyCount(self, -1)
+	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/
 	-- Remove this function if not needed
 end
 
 function on_input(self, action_id, action)
-	if action_id == ACTION_GENERATE and action.pressed then 
-		local coord = vmath.vector3(action.x, action.y, 0)
-		local pos = camera.screen_to_world(CAMERA_ID, coord)
-		factory.create('#factory', pos)
-	end
+	-- if action_id == ACTION_GENERATE and action.pressed then 
+	-- 	local coord = vmath.vector3(action.x, action.y, 0)
+	-- 	local pos = camera.screen_to_world(CAMERA_ID, coord)
+	-- 	factory.create('#factory', pos)
+	-- 	updateFlyCount(self, 1)
+	-- end
 	-- Add input-handling code here. The game object this script is attached to
 	-- must have acquired input focus:
 	--

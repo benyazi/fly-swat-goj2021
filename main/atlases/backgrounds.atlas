@@ -18,6 +18,26 @@ images {
   image: "/assets/images/wood.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/images/jam_1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/jam_2.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/jam_3.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/jam_4.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/images/jam_5.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "FlyIdle"
   images {
@@ -30,6 +50,17 @@ animations {
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "FlyDied"
+  images {
+    image: "/assets/images/fly_1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_NONE
+  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }

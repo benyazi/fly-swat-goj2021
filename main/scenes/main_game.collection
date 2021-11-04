@@ -96,8 +96,8 @@ instances {
   id: "Wood"
   prototype: "/main/objects/Wood.go"
   position {
-    x: -336.0
-    y: 451.0
+    x: -156.0
+    y: 210.0
     z: 0.0
   }
   rotation {
@@ -116,8 +116,8 @@ instances {
   id: "Jam"
   prototype: "/main/objects/Jam.go"
   position {
-    x: -336.0
-    y: 510.0
+    x: -156.0
+    y: 269.0
     z: 0.0
   }
   rotation {
@@ -176,8 +176,8 @@ instances {
   id: "Jam2"
   prototype: "/main/objects/Jam.go"
   position {
-    x: 215.0
-    y: 934.0
+    x: -96.0
+    y: -316.0
     z: 0.0
   }
   rotation {
@@ -196,8 +196,8 @@ instances {
   id: "Wood2"
   prototype: "/main/objects/Wood.go"
   position {
-    x: 215.0
-    y: 875.0
+    x: -96.0
+    y: -375.0
     z: 0.0
   }
   rotation {

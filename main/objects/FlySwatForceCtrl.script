@@ -40,6 +40,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == MSG_UPDATE_ROTATION then 
 		local angle = message.angle
 		-- self.hand_angle = angle - math.rad(90)
+		angle = angle - math.rad(180)
 		go.set_rotation(vmath.quat_rotation_z(angle))
 		local dist = message.dist
 		--calc force 

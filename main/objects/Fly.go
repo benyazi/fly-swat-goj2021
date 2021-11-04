@@ -43,6 +43,8 @@ embedded_components {
   "restitution: 0.5\n"
   "group: \"fly\"\n"
   "mask: \"swat\"\n"
+  "mask: \"swatSound\"\n"
+  "mask: \"jam\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"
