@@ -12,7 +12,7 @@ background_color {
 nodes {
   position {
     x: 450.0
-    y: 460.0
+    y: 246.0
     z: 0.0
     w: 1.0
   }
@@ -23,8 +23,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 4.311
+    y: 2.057
     z: 1.0
     w: 1.0
   }
@@ -59,7 +59,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.28
+  alpha: 0.15
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }

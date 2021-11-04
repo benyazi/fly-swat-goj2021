@@ -4,6 +4,9 @@ function init(self)
 	-- Remove this function if not needed
 	self.killed = false
 	self.state = 1
+	self.directionIndex = 0
+	self.directions = {}
+	self.speed = 50
 end
 
 function final(self)
@@ -13,7 +16,10 @@ function final(self)
 end
 
 function update(self, dt)
-	
+	local vec = getActiveDirection(self)
+	local pos = go.get_position()
+	pos = pos + vec * self.speed * dt 
+	go.set_position(pos)
 end
 
 function damage(self)
@@ -35,6 +41,46 @@ end
 
 local MSG_TRIGGER = hash("trigger_response")
 local TRIGGER_GROUP_SWAT = hash('swat')
+local TRIGGER_GROUP_FOOD = hash('food')
+local TRIGGER_GROUP_LINE = hash('line')
+local TRIGGER_GROUP_FOOD_DONE = hash('food_done')
+
+function setDirection(self, other_id)
+	-- local rotation = go.get_rotation(other_id)
+	local rot = go.get(other_id, "euler.z")
+	pprint(rot)
+	local dir = vmath.vector3(0, -1, 0)
+	if rot == 90 then 
+		dir = vmath.vector3(1, 0, 0)
+	elseif rot == -90 then 
+		dir = vmath.vector3(-1, 0, 0)
+	elseif rot == 180 then 
+		dir = vmath.vector3(0, 1, 0)
+	end
+	self.directionIndex = self.directionIndex + 1
+	self.directions[self.directionIndex] = {
+		dir = dir,
+		id = other_id,
+		active = true
+	}
+end
+
+function getActiveDirection(self)
+	for k, v in pairs(self.directions) do
+		if v.active then 
+			return self.directions[k].dir
+		end
+	end
+	return vmath.vector3()
+end
+
+function setDirectionUnactive(self, other_id)
+	for k, v in pairs(self.directions) do
+		if v.id == other_id and v.active then 
+			self.directions[k].active = false
+		end
+	end
+end
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
@@ -42,7 +88,19 @@ function on_message(self, message_id, message, sender)
 		if message.group == TRIGGER_GROUP_SWAT and message.enter then
 			damage(self) 
 		end
-		
+
+		if message.group == TRIGGER_GROUP_LINE and message.own_group == TRIGGER_GROUP_FOOD and message.enter then
+			setDirection(self, message.other_id)
+		end
+
+		if message.group == TRIGGER_GROUP_LINE and message.own_group == TRIGGER_GROUP_FOOD and message.enter == false then
+			setDirectionUnactive(self, message.other_id)
+		end
+
+		if message.group == TRIGGER_GROUP_FOOD_DONE and message.own_group == TRIGGER_GROUP_FOOD and message.enter then
+			destroy(self)
+		end
+
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

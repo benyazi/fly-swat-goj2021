@@ -11,6 +11,9 @@ function init(self)
 	self.flipped = false
 
 	self.unEaterTimer = nil
+	
+	self.target = nil
+	self.targetOffset = vmath.vector3()
 
 	generatePath(self, false)
 	run(self)
@@ -71,6 +74,13 @@ end
 
 function update(self, dt)
 	local pos = go.get_position()
+
+	if self.target then 
+		local otherPos = go.get_position(self.target)
+		pos = otherPos + self.targetOffset
+		go.set_position(pos) 
+	end
+	
 	if pos.x > self.prevPos.x and self.flipped == false then
 		self.flipped = true 
 		sprite.set_hflip('#sprite', true)
@@ -97,6 +107,8 @@ function destroy(self)
 end
 
 function runAwayFromSwat(self)
+	self.target = nil 
+	self.targetOffset = vmath.vector3()
 	self.unEaterTimer = 2
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil
@@ -118,7 +130,12 @@ function runAwayFromSwat(self)
 	run(self)
 end
 
-function eatJam(self)
+function eatJam(self, other_id)
+	self.target = other_id 
+	local otherPos = go.get_position(other_id)	
+	local pos = go.get_position()
+	self.targetOffset = pos - otherPos 
+	
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil	
 end
@@ -147,7 +164,7 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if message.group == TRIGGER_GROUP_JAM and message.enter and self.killed == false and self.unEaterTimer == nil then 
-			eatJam(self)
+			eatJam(self, message.other_id)
 		end
 	end
 	if message_id == MSG_KILL then

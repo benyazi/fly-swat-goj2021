@@ -22,9 +22,11 @@ function generateFlies(self)
 		local pos = vmath.vector3()
 		pos.x = rnd.double_range(minX, maxX)
 		pos.y = rnd.double_range(minY, maxY)
+		pos.z = 0.1
 		-- local coord = vmath.vector3(action.x, action.y, 0)
 		-- local pos = camera.screen_to_world(CAMERA_ID, coord)
-		factory.create('#factory', pos)
+		local fly = factory.create('#factory', pos)
+		
 		updateFlyCount(self, 1)
 	end
 end

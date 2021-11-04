@@ -80,6 +80,7 @@ function on_message(self, message_id, message, sender)
 		local rot = vmath.quat_rotation_z(angle)
 		local vec2 = vmath.rotate(rot, vec)
 		pos = pos + vec2
+		pos.z = 0.5
 		go.set_position(pos)
 		self.reloadTimer = RELOAD_TIME
 		self.checkCollisions = 0.005
