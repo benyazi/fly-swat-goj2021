@@ -1,0 +1,73 @@
+function init(self)
+	msg.post("#sprite", "disable")
+	self.removeTimer = nil
+
+	self.titles = {}
+	self.titles['double_kill'] = 'titles_1'
+	self.titles['triple_kill'] = 'titles_2'
+	self.titles['combo_1'] = 'titles_3'
+	self.titles['combo_2'] = 'titles_4'
+	self.titles['combo_3'] = 'titles_5'
+	self.titles['combo_4'] = 'titles_6'
+	self.titles['combo_5'] = 'titles_7'
+	self.titles['combo_6'] = 'titles_8'
+	self.titles['combo_x'] = 'titles_9'
+	
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+	if self.removeTimer then 
+		if self.removeTimer > 0 then 
+			self.removeTimer = self.removeTimer - dt 
+		else
+			self.removeTimer = nil 
+			go.delete()
+		end
+
+		local scale = go.get_scale()
+		scale = scale + vmath.vector3(0.5 * dt, 0.5 * dt, 0)
+		go.set_scale(scale)
+	end
+
+end
+
+local MSG_SHOW_TITLE = hash('SHOW_TITLE')
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_SHOW_TITLE then 
+		local image = self.titles['combo_x']
+		if self.titles[message.title] ~= nil then 
+			image = self.titles[message.title]
+		end
+		sprite.play_flipbook('#sprite', image)
+		msg.post("#sprite", "enable")
+		self.removeTimer = 1.5
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

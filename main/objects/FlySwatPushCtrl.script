@@ -8,9 +8,12 @@ local SCALE_MAX = 4
 local SCALE_MIN = 0.2
 
 local RELOAD_TIME = 0.25
+local COMBO_TIME = 2
 
 function init(self)
 	self.reloadTimer = nil
+	self.comboTimer = nil
+	self.comboLevel = 0
 	go.set_position(vmath.vector3(-1000,-1000,0))
 	self.checkCollisions = false
 	self.flies = {}
@@ -23,6 +26,16 @@ function final(self)
 end
 
 function update(self, dt)
+	
+	if self.comboTimer then
+		if self.comboTimer > 0 then 
+			self.comboTimer = self.comboTimer - dt
+		else
+			self.comboTimer = nil
+			self.comboLevel = 0
+		end
+	end
+	
 	if self.reloadTimer and self.reloadTimer > 0 then 
 		self.reloadTimer = self.reloadTimer - dt
 	elseif self.reloadTimer ~= nil then
@@ -43,9 +56,31 @@ function update(self, dt)
 			self.flies = {}
 			self.checkCollisions = false
 			if count > 0 then 
+				local pos = go.get_position()
+				pos.z = 0.6
 				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "slap"})
+				local title = nil
+				if count == 2 then 
+					title = factory.create('#factory', pos)
+					msg.post(title, 'SHOW_TITLE', {title = 'double_kill'})
+				elseif count == 3 then 
+					title = factory.create('#factory', pos)
+					msg.post(title, 'SHOW_TITLE', {title = 'triple_kill'})
+				end
+
+				if self.comboTimer and title == nil then 
+					title = factory.create('#factory', pos)
+					msg.post(title, 'SHOW_TITLE', {title = 'combo_' .. self.comboLevel})
+				end
+				
+				self.comboTimer = COMBO_TIME
+				self.comboLevel = self.comboLevel + 1
 			else 
 				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "fail"})
+				if self.comboTimer then 
+					self.comboTimer = nil
+					self.comboLevel = 0
+				end
 			end
 		end
 	end
