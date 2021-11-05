@@ -73,15 +73,10 @@ function on_message(self, message_id, message, sender)
 	if message_id == MSG_PUSH then 
 		local pos = message.pos 
 		local angle = message.angle
-		go.set_rotation(vmath.quat_rotation_z(angle))
-		angle = angle + math.rad(90)
-		local dist = message.dist * 2
-		local vec = vmath.vector3(dist, 0, 0)
-		local rot = vmath.quat_rotation_z(angle)
-		local vec2 = vmath.rotate(rot, vec)
-		pos = pos + vec2
-		pos.z = 0.5
-		go.set_position(pos)
+		local dist = message.dist
+		go.set_rotation(SwatManager.calculateRotation(angle))
+		go.set_position(SwatManager.calculatePosition(pos, angle, dist))
+		
 		self.reloadTimer = RELOAD_TIME
 		self.checkCollisions = 0.005
 	end

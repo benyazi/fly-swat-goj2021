@@ -33,6 +33,13 @@ function update(self, dt)
 		
 		-- print('ANGLE = ' .. angle .. ' dist = ' .. dist)
 		msg.post('/FlySwapForce', 'UPDATE_ROTATION', {angle = angle, dist = dist})
+		msg.post('/FlySwapTarget', 'UPDATE_TARGET', {
+			angle = angle, 
+			dist = dist,
+			start = self.startPoint,
+			finish = self.finishPoint,
+			pos = self.startPoint
+		})
 	end
 end
 

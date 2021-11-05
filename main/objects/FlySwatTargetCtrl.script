@@ -1,0 +1,32 @@
+local camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+
+function init(self)
+	go.set('#sprite', 'tint.w', 0.25)
+	go.set_position(vmath.vector3(-1000,-1000,0))
+end
+
+local MSG_UPDATE_TARGET = hash("UPDATE_TARGET")
+local MSG_SHOW = hash('SHOW')
+local MSG_HIDE = hash('HIDE')
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_UPDATE_TARGET then
+		local pos = message.pos 
+		local angle = message.angle
+		local dist = message.dist
+		go.set_rotation(SwatManager.calculateRotation(angle))
+		go.set_position(SwatManager.calculatePosition(pos, angle, dist))
+	end
+	
+	if message_id == MSG_SHOW then 
+		msg.post("#sprite", "enable")
+	end
+	if message_id == MSG_HIDE then 
+		msg.post("#sprite", "disable")
+	end
+	
+	if message_id == MSG_PUSH then 
+	end
+	
+end

@@ -1,5 +1,6 @@
 local monarch = require "monarch.monarch"
 DataManager = require "src.managers.DataManager"
+SwatManager = require "src.managers.SwatManager"
 local camera = require "orthographic.camera"
 local CAMERA_ID = hash('/camera')
 
