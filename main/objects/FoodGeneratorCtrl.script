@@ -1,10 +1,14 @@
-local TIMER_MIN = 2
-local TIMER_MAX = 5
+local TIMER_MIN = 4
+local TIMER_MAX = 6
 function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
 	self.generateTimer = nil
+	self.typeInc = 1
+	self.types = {}
+	self.types[1] = 'jam'
+	self.types[2] = 'water_melon'
 	newTimer(self)
 end
 
@@ -22,7 +26,20 @@ end
 function generateFood(self)
 	local pos = go.get_position()
 	local food = factory.create('#factory', pos)
+	self.typeInc = self.typeInc + 1
+	if self.types[self.typeInc] == nil then 
+		self.typeInc = 1
+	end
+	local fullState = 6
+	if self.typeInc == 2 then
+		fullState = 4
+	end
+	msg.post(food, 'CHANGE_TYPE', {
+		foodType = self.types[self.typeInc],
+		fullState = fullState
+	})
 	go.set_scale(vmath.vector3(0.75,0.75,1), food)
+	
 end
 
 function update(self, dt)

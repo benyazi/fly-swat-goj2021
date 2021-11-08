@@ -4,6 +4,8 @@ function init(self)
 	-- Remove this function if not needed
 	self.killed = false
 	self.state = 1
+	self.fullState = 6
+	self.foodType = 'jam'
 	self.directionIndex = 0
 	self.directions = {}
 	self.speed = 50
@@ -35,8 +37,8 @@ function damage(self)
 		return
 	end
 	self.state = self.state + 1
-	if self.state < 6 then 
-		sprite.play_flipbook('#sprite', hash('jam_' .. self.state))
+	if self.state < self.fullState then 
+		sprite.play_flipbook('#sprite', hash(self.foodType .. '_' .. self.state))
 	else
 		self.killed = true
 		destroy(self)
@@ -86,6 +88,7 @@ function setDirectionUnactive(self, other_id)
 end
 
 local MSG_TRIGGER = hash("trigger_response")
+local MSG_CHANGE_TYPE = hash("CHANGE_TYPE")
 local TRIGGER_GROUP_SWAT = hash('swat')
 local TRIGGER_GROUP_FOOD = hash('food')
 local TRIGGER_GROUP_LINE = hash('line')
@@ -123,6 +126,11 @@ function on_message(self, message_id, message, sender)
 			foodDone(self)
 		end
 
+	end
+	if message_id == MSG_CHANGE_TYPE then 
+		self.foodType = message.foodType
+		self.fullState = message.fullState
+		sprite.play_flipbook('#sprite', hash(self.foodType .. '_' .. self.state))
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/
