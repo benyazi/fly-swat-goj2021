@@ -1,7 +1,35 @@
+
+local SWITCH_PERK_TIME = 1.5
+
 function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+
+	--set start position
+	self.perks = PerkManager.getPerks()
+	-- self.perks[1] = {
+	-- 	name = 'push_increase',
+	-- 	color = vmath.vector4(0.7,0,0,1)
+	-- }
+	-- self.perks[2] = {
+	-- 	name = 'push_decrease',
+	-- 	color = vmath.vector4(1,0,0,1)
+	-- }
+	-- self.perks[3] = {
+	-- 	name = 'line_speed_increase',
+	-- 	color = vmath.vector4(0,0.7,0,1)
+	-- }
+	-- self.perks[4] = {
+	-- 	name = 'line_speed_decrease',
+	-- 	color = vmath.vector4(0,1,0,1)
+	-- }
+	-- self.perks[5] = {
+	-- 	name = 'freeze',
+	-- 	color = vmath.vector4(0,0,1,1)
+	-- }
+	self.currentPerk = 1
+	
 	self.killed = false
 	self.speed = 3
 	self.path = {}
@@ -10,11 +38,9 @@ function init(self)
 	self.prevPos = go.get_position()
 	self.flipped = false
 
-	self.unEaterTimer = nil
+	self.switchPerkTimer = SWITCH_PERK_TIME
 	
-	self.target = nil
-	self.targetOffset = vmath.vector3()
-
+	switchPerk(self)
 	generatePath(self, false)
 	run(self)
 	sound.play('#sound')
@@ -25,19 +51,16 @@ local MIX_Y = -500
 local MAX_Y = 500 
 local MAX_X = 450 
 
+
 function generatePath(self, firstPoint)
-	for i = 1, 5 do 
-		local pos = vmath.vector3() 
-		if i < 2 and firstPoint then 
-			pos = firstPoint -- vmath.vector3()
-			-- local pos = firstPoint
-		else
-			rnd.seed()
-			pos.x = rnd.double_range(MIX_X, MAX_X)
-			pos.y = rnd.double_range(MIX_Y, MAX_Y)
-		end
-		self.path[i] = pos
+	local i = 1
+	if firstPoint ~= false then 
+		self.path[i] = firstPoint
+		i = i + 1
 	end
+	
+	local pos = vmath.vector3() 
+	self.path[i] = pos
 end
 
 local function fly_kill_done(self, url, property)
@@ -50,8 +73,8 @@ local function fly_done(self, url, property)
 	end
 	self.currentPathIndex = self.currentPathIndex + 1
 	if self.path[self.currentPathIndex] then 
-		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed())
-		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed(), 0, fly_done)
+		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed)
+		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed, 0, fly_done)
 	else
 		self.currentPathIndex = nil
 		generatePath(self)
@@ -61,8 +84,8 @@ end
 
 function run(self)
 	self.currentPathIndex = 1
-	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed())
-	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed(), 0, fly_done)
+	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed)
+	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed, 0, fly_done)
 
 end
 
@@ -72,13 +95,20 @@ function final(self)
 	-- Remove this function if not needed
 end
 
+function switchPerk(self)
+	rnd.seed()
+	self.currentPerk = rnd.range(1, 5)
+	go.set("#sprite", "tint", self.perks[self.currentPerk].color)
+end
+
 function update(self, dt)
 	local pos = go.get_position()
 
-	if self.target then 
-		local otherPos = go.get_position(self.target)
-		pos = otherPos + self.targetOffset
-		go.set_position(pos) 
+	if self.switchPerkTimer > 0 then 
+		self.switchPerkTimer = self.switchPerkTimer - dt
+	else
+		switchPerk(self)
+		self.switchPerkTimer = SWITCH_PERK_TIME
 	end
 	
 	if pos.x > self.prevPos.x and self.flipped == false then
@@ -92,14 +122,6 @@ function update(self, dt)
 		sprite.set_hflip('#sprite', false)
 	end
 	self.prevPos = pos
-
-	if self.unEaterTimer ~= nil then 
-		if self.unEaterTimer > 0 then 
-			self.unEaterTimer = self.unEaterTimer - dt
-		else
-			self.unEaterTimer = nil
-		end
-	end
 end
 
 function destroy(self)
@@ -107,9 +129,6 @@ function destroy(self)
 end
 
 function runAwayFromSwat(self, random)
-	self.target = nil 
-	self.targetOffset = vmath.vector3()
-	self.unEaterTimer = 2
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil
 	
@@ -136,22 +155,10 @@ function runAwayFromSwat(self, random)
 	run(self)
 end
 
-function eatJam(self, other_id)
-	self.target = other_id 
-	local otherPos = go.get_position(other_id)	
-	local pos = go.get_position()
-	self.targetOffset = pos - otherPos 
-	
-	go.cancel_animations(go.get_id(), "position")
-	self.currentPathIndex = nil	
-end
-
 local MSG_TRIGGER = hash("trigger_response")
 local TRIGGER_GROUP_SWAT = hash('swat')
 local TRIGGER_GROUP_SWAT_SOUND = hash('swatSound')
-local TRIGGER_GROUP_JAM = hash('jam')
 local MSG_KILL = hash("KILL_FLY")
-local MSG_FOOD_REMOVED = hash('FOOD_REMOVED')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
@@ -169,10 +176,6 @@ function on_message(self, message_id, message, sender)
 		if message.group == TRIGGER_GROUP_SWAT_SOUND and message.enter and self.killed == false then 
 			runAwayFromSwat(self)
 		end
-
-		if message.group == TRIGGER_GROUP_JAM and message.enter and self.killed == false and self.unEaterTimer == nil then 
-			eatJam(self, message.other_id)
-		end
 	end
 	if message_id == MSG_KILL then
 		self.killed = true
@@ -181,10 +184,8 @@ function on_message(self, message_id, message, sender)
 		sprite.play_flipbook('#sprite', hash('FlyDied'))
 		sprite.set_vflip('#sprite', true)
 		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
-		msg.post('/FlyGenerator', 'FLY_KILLED')
-	end
-	if message_id == MSG_FOOD_REMOVED then
-		runAwayFromSwat(self, true)
+		msg.post('/FlyGenerator', 'PERK_KILLED')
+		PerkManager.setActivePerk(self.perks[self.currentPerk])
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

@@ -8,7 +8,7 @@ function init(self)
 	self.foodType = 'jam'
 	self.directionIndex = 0
 	self.directions = {}
-	self.speed = 50
+	self.speed = DataManager.getLineSpeed()
 	
 	self.eatedLevel = 100
 	self.flyCount = 0
@@ -24,7 +24,7 @@ end
 function update(self, dt)
 	local vec = getActiveDirection(self)
 	local pos = go.get_position()
-	pos = pos + vec * self.speed * dt 
+	pos = pos + vec * DataManager.getLineSpeed() * dt 
 	go.set_position(pos)
 
 	if self.flyCount > 0 and self.eatedLevel > 0 then 

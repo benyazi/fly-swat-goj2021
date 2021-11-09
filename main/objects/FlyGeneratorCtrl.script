@@ -5,7 +5,9 @@ local CAMERA_ID = hash('/camera')
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.flyCount = 0
+	self.perkCount = 0
 	self.flyStart = 10
+	self.perkGenerateTimer = 5
 
 	self.waveCount = 1
 	self.waveData = {}
@@ -43,6 +45,25 @@ function generateFlies(self)
 	end
 end
 
+function generatePerk(self)
+	if self.perkCount > 5 then 
+		return
+	end
+	local viewport = camera.get_viewport(CAMERA_ID)
+	-- pprint(viewport)
+	local minX = viewport.x - viewport.z/2
+	local maxX = viewport.x + viewport.z/2
+	local minY = viewport.y - viewport.w/2
+	local maxY = viewport.y + viewport.w/2
+	rnd.seed()
+	local pos = vmath.vector3()
+	pos.x = rnd.double_range(minX, maxX)
+	pos.y = rnd.double_range(minY, maxY)
+	pos.z = 0.1
+	local fly = factory.create('#factoryPerk', pos)	
+	self.perkCount = self.perkCount + 1
+end
+
 function newWave(self)
 	self.waveCount = self.waveCount + 1
 	if self.waveData[self.waveCount] then 
@@ -68,16 +89,26 @@ function final(self)
 end
 
 function update(self, dt)
+	if self.perkGenerateTimer > 0 then 
+		self.perkGenerateTimer = self.perkGenerateTimer - dt
+	else
+		self.perkGenerateTimer = 5
+		generatePerk(self)
+	end
 	-- Add update code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
 end
 
 local MSG_FLY_KILLED = hash('FLY_KILLED')
+local MSG_PERK_KILLED = hash('PERK_KILLED')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_FLY_KILLED then 
 		updateFlyCount(self, -1)
+	end
+	if message_id == MSG_PERK_KILLED then 
+		self.perkCount = self.perkCount - 1
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

@@ -2,6 +2,24 @@ local DataManager = {}
 
 local current_scene = nil
 local points = 0
+local line_speed = 50
+local fly_speed_diff = 1
+
+function DataManager.getLineSpeed()
+	return line_speed
+end
+
+function DataManager.setLineSpeed(speed)
+	line_speed = speed
+end
+
+function DataManager.getFlySpeed()
+	return fly_speed_diff
+end
+
+function DataManager.setFlySpeed(speed)
+	fly_speed_diff = speed
+end
 
 function DataManager.setCurrentScene(sceneName)
 	current_scene = sceneName

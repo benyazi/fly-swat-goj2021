@@ -1,6 +1,7 @@
 local monarch = require "monarch.monarch"
 DataManager = require "src.managers.DataManager"
 SwatManager = require "src.managers.SwatManager"
+PerkManager = require "src.managers.PerkManager"
 local camera = require "orthographic.camera"
 local CAMERA_ID = hash('/camera')
 
@@ -9,6 +10,7 @@ local CAMERA_ID = hash('/camera')
 -- OrderManager = require "src.managers.OrderManager"
 
 function init(self)
+	PerkManager.init()	
 	msg.post(".", "acquire_input_focus")
 	msg.post("#", "SHOW_MAIN_MENU")
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })

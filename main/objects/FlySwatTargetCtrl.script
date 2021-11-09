@@ -10,6 +10,10 @@ local MSG_UPDATE_TARGET = hash("UPDATE_TARGET")
 local MSG_SHOW = hash('SHOW')
 local MSG_HIDE = hash('HIDE')
 
+local MSG_INCREASE = hash("INCREASE")
+local MSG_DECREASE = hash("DECREASE")
+local MSG_NORMAL_SCALE = hash("NORMAL_SCALE")
+
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_UPDATE_TARGET then
 		local pos = message.pos 
@@ -24,6 +28,18 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == MSG_HIDE then 
 		msg.post("#sprite", "disable")
+	end
+	if message_id == MSG_INCREASE then 
+		local scale = vmath.vector3(2,2,1)
+		go.set_scale(scale)
+	end
+	if message_id == MSG_NORMAL_SCALE then 
+		local scale = vmath.vector3(1,1,1)
+		go.set_scale(scale)
+	end
+	if message_id == MSG_DECREASE then 
+		local scale = vmath.vector3(0.5,0.5,1)
+		go.set_scale(scale)
 	end
 	
 	if message_id == MSG_PUSH then 

@@ -90,6 +90,10 @@ local MSG_TRIGGER = hash("trigger_response")
 local TRIGGER_GROUP_FLY = hash('fly')
 local TRIGGER_GROUP_SWAT = hash('swat')
 
+local MSG_INCREASE = hash("INCREASE")
+local MSG_DECREASE = hash("DECREASE")
+local MSG_NORMAL_SCALE = hash("NORMAL_SCALE")
+
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
 		if message.group == TRIGGER_GROUP_FLY and message.own_group == TRIGGER_GROUP_SWAT and message.enter then 
@@ -103,6 +107,18 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == MSG_HIDE then 
 		msg.post("#sprite", "disable")
+	end
+	if message_id == MSG_INCREASE then 
+		local scale = vmath.vector3(2,2,1)
+		go.set_scale(scale)
+	end
+	if message_id == MSG_NORMAL_SCALE then 
+		local scale = vmath.vector3(1,1,1)
+		go.set_scale(scale)
+	end
+	if message_id == MSG_DECREASE then 
+		local scale = vmath.vector3(0.5,0.5,1)
+		go.set_scale(scale)
 	end
 	
 	if message_id == MSG_PUSH then 
