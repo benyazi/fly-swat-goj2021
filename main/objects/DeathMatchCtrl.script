@@ -1,0 +1,76 @@
+function init(self)
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+	self.flyCount = 0
+	self.timer = 30
+	msg.post('/DeathMatchManager', 'HIDE')
+	ScoreManager.clear()
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	if self.timer ~= nil and self.timer > 0 then 
+		self.timer = self.timer - dt
+		msg.post('/DeathMatchManager', 'UPDATE_TIME', {time = math.floor(self.timer)})
+	elseif self.timer ~= nil then 
+		self.timer = nil 
+		finalRound(self)
+	end
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function finalRound(self)
+	msg.post('/swatGui', 'DISABLE')
+	msg.post('/DeathMatchManager', 'FINALE')
+end
+
+function updateFlyCountT(self, diff)
+	self.flyCount =  self.flyCount + diff
+	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
+
+	if self.flyCount <= 0 then 
+		-- newWave(self)
+	end
+end
+
+local MSG_FLY_KILLED = hash('FLY_KILLED')
+local MSG_FLY_ADDED = hash('FLY_ADDED')
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_FLY_KILLED then 
+		updateFlyCountT(self, -1)
+	end
+	if message_id == MSG_FLY_ADDED then 
+		updateFlyCountT(self, 1)
+	end
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

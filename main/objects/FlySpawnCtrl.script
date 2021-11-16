@@ -4,42 +4,40 @@ local CAMERA_ID = hash('/camera')
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	self.flyCount = 0
-	self.perkCount = 0
-	self.flyStart = 10
+	self.flyStart = 3
 	self.perkGenerateTimer = 5
 
 	self.waveCount = 1
 	self.waveData = {}
 	self.waveData[1] = {
-		flies = 10
+		flies = 1
 	}
 	self.waveData[2] = {
-		flies = 15
+		flies = 1
 	}
 	self.waveData[3] = {
-		flies = 25
+		flies = 2
+	}
+	self.waveData[4] = {
+		flies = 2
+	}
+	self.waveData[5] = {
+		flies = 3
+	}
+	self.waveData[6] = {
+		flies = 3
 	}
 	
 	generateFlies(self)
 end
 
 function generateFlies(self)
-	msg.post('/swatGui#Swat', 'UPDATE_WAVE', {count = self.waveCount})
-	local viewport = camera.get_viewport(CAMERA_ID)
-	-- pprint(viewport)
-	local minX, maxX, minY, maxY = DataManager.getBorders()
-	
-	-- print('' .. x .. ' - '.. y.. ' - '..w.. ' - '..h ..'')
-	-- pprint(self.waveData)
 	for i = 1, self.waveData[self.waveCount].flies do
-		rnd.seed()
-		local pos = vmath.vector3()
-		pos.x = rnd.double_range(minX, maxX)
-		pos.y = rnd.double_range(minY, maxY)
+		local pos = go.get_position()
 		pos.z = 0.1
-		local fly = factory.create('#factory', pos)		
-		updateFlyCount(self, 1)
+		local fly = factory.create('#factory', pos)
+		msg.post(fly, 'SET_HOME', {home = go.get_id()})
+		msg.post('/DeathMatchManager#DeathMatchCtrl', 'FLY_ADDED')
 	end
 end
 
@@ -57,6 +55,7 @@ function generatePerk(self)
 	local pos = vmath.vector3()
 	pos.x = rnd.double_range(minX, maxX)
 	pos.y = rnd.double_range(minY, maxY)
+	-- pos = go.get_position()
 	pos.z = 0.1
 	local fly = factory.create('#factoryPerk', pos)	
 	self.perkCount = self.perkCount + 1
@@ -72,12 +71,11 @@ function newWave(self)
 end
 
 function updateFlyCount(self, diff)
-	self.flyCount =  self.flyCount + diff
-	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
-
-	if self.flyCount <= 0 then 
-		newWave(self)
-	end
+-- 	self.flyCount =  self.flyCount + diff
+-- 
+-- 	if self.flyCount <= 0 then 
+-- 		newWave(self)
+-- 	end
 end
 
 function final(self)
@@ -87,12 +85,12 @@ function final(self)
 end
 
 function update(self, dt)
-	if self.perkGenerateTimer > 0 then 
-		self.perkGenerateTimer = self.perkGenerateTimer - dt
-	else
-		self.perkGenerateTimer = 5
-		generatePerk(self)
-	end
+	-- if self.perkGenerateTimer > 0 then 
+	-- 	self.perkGenerateTimer = self.perkGenerateTimer - dt
+	-- else
+	-- 	self.perkGenerateTimer = 5
+	-- 	generatePerk(self)
+	-- end
 	-- Add update code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
@@ -100,8 +98,12 @@ end
 
 local MSG_FLY_KILLED = hash('FLY_KILLED')
 local MSG_PERK_KILLED = hash('PERK_KILLED')
+local MSG_DEAR_FLY_KILLED = hash('DEAR_FLY_KILLED')
 
 function on_message(self, message_id, message, sender)
+	if message_id == MSG_DEAR_FLY_KILLED then 
+		newWave(self)
+	end
 	if message_id == MSG_FLY_KILLED then 
 		updateFlyCount(self, -1)
 	end

@@ -63,23 +63,28 @@ function update(self, dt)
 				if count == 2 then 
 					title = factory.create('#factory', pos)
 					msg.post(title, 'SHOW_TITLE', {title = 'double_kill'})
+					ScoreManager.addDKill()
 				elseif count == 3 then 
 					title = factory.create('#factory', pos)
 					msg.post(title, 'SHOW_TITLE', {title = 'triple_kill'})
+					ScoreManager.addTKill()
 				end
 
 				if self.comboTimer and title == nil then 
 					title = factory.create('#factory', pos)
 					msg.post(title, 'SHOW_TITLE', {title = 'combo_' .. self.comboLevel})
+					ScoreManager.setMCombo(self.comboLevel)
 				end
 				
 				self.comboTimer = COMBO_TIME
 				self.comboLevel = self.comboLevel + 1
+				ScoreManager.setComboLevel(self.comboLevel)
 			else 
 				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "fail"})
 				if self.comboTimer then 
 					self.comboTimer = nil
 					self.comboLevel = 0
+					ScoreManager.setComboLevel(self.comboLevel)
 				end
 			end
 		end

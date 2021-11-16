@@ -3,9 +3,10 @@ function init(self)
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
 	self.killed = false
-	self.speed = 3
+	self.speed = 200
 	self.path = {}
 	self.currentPathIndex = nil
+	self.home = nil
 
 	self.prevPos = go.get_position()
 	self.flipped = false
@@ -26,6 +27,8 @@ local MAX_Y = 500
 local MAX_X = 450 
 
 function generatePath(self, firstPoint)
+
+	local minX, maxX, minY, maxY = DataManager.getBorders()
 	for i = 1, 5 do 
 		local pos = vmath.vector3() 
 		if i < 2 and firstPoint then 
@@ -33,8 +36,8 @@ function generatePath(self, firstPoint)
 			-- local pos = firstPoint
 		else
 			rnd.seed()
-			pos.x = rnd.double_range(MIX_X, MAX_X)
-			pos.y = rnd.double_range(MIX_Y, MAX_Y)
+			pos.x = rnd.double_range(minX, maxX)
+			pos.y = rnd.double_range(minY, maxY)
 		end
 		self.path[i] = pos
 	end
@@ -44,14 +47,23 @@ local function fly_kill_done(self, url, property)
 	destroy(self)
 end
 
+local function calculateTime(self, targetPos)
+	local pos = go.get_position()
+	local dx = targetPos.x - pos.x
+	local dy = targetPos.y - pos.y
+	local dist = math.sqrt( dx * dx + dy * dy )
+	return (dist / self.speed) * DataManager.getFlySpeed()
+end
+
 local function fly_done(self, url, property)
 	if self.killed then 
 		return 
 	end
 	self.currentPathIndex = self.currentPathIndex + 1
 	if self.path[self.currentPathIndex] then 
-		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed())
-		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed(), 0, fly_done)
+		local time = calculateTime(self, self.path[self.currentPathIndex])
+		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, time)
+		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, time, 0, fly_done)
 	else
 		self.currentPathIndex = nil
 		generatePath(self)
@@ -61,8 +73,9 @@ end
 
 function run(self)
 	self.currentPathIndex = 1
-	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed())
-	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, self.speed * DataManager.getFlySpeed(), 0, fly_done)
+	local time = calculateTime(self, self.path[self.currentPathIndex])
+	go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].y, go.EASING_LINEAR, time)
+	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, self.path[self.currentPathIndex].x, go.EASING_LINEAR, time, 0, fly_done)
 
 end
 
@@ -113,25 +126,8 @@ function runAwayFromSwat(self, random)
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil
 	
-	local dist = 800
-	local pushPos = go.get_position('/FlySwapPush')
-	if random then 
-		dist = 400
-		pushPos.x = rnd.double_range(MIX_X, MAX_X)
-		pushPos.y = rnd.double_range(MIX_Y, MAX_Y)
-	end
-	
 	local pos = go.get_position()
-
-	local angle = math.atan2(pos.x - pushPos.x, pushPos.y - pos.y)
-	local dx = pushPos.x - pos.x
-	local dy = pushPos.y - pos.y
-
-	angle = angle - math.rad(90)
-	local vec = vmath.vector3(dist, 0, 0)
-	local rot = vmath.quat_rotation_z(angle)
-	local vec2 = vmath.rotate(rot, vec)
-	pos = pos + vec2
+	pos = SwatManager.calculateRunAway(pos)
 	generatePath(self, pos)
 	run(self)
 end
@@ -152,6 +148,7 @@ local TRIGGER_GROUP_SWAT_SOUND = hash('swatSound')
 local TRIGGER_GROUP_JAM = hash('jam')
 local MSG_KILL = hash("KILL_FLY")
 local MSG_FOOD_REMOVED = hash('FOOD_REMOVED')
+local MSG_SET_HOME = hash('SET_HOME')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_TRIGGER then -- <2>
@@ -175,16 +172,23 @@ function on_message(self, message_id, message, sender)
 		end
 	end
 	if message_id == MSG_KILL then
+		ScoreManager.addKill()
 		self.killed = true
 		sound.stop('#sound')
 		go.cancel_animations(go.get_id(), "position")
-		sprite.play_flipbook('#sprite', hash('FlyDied'))
+		sprite.play_flipbook('#sprite', hash('Fly2Died'))
 		sprite.set_vflip('#sprite', true)
 		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
-		msg.post('/FlyGenerator', 'FLY_KILLED')
+		-- msg.post('/FlyGenerator', 'FLY_KILLED')
+		if self.home then 
+			msg.post(self.home, 'DEAR_FLY_KILLED')
+		end
 	end
 	if message_id == MSG_FOOD_REMOVED then
 		runAwayFromSwat(self, true)
+	end
+	if message_id == MSG_SET_HOME then
+		self.home = message.home
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

@@ -1,0 +1,78 @@
+function init(self)
+	self.active = false
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+local MSG_HIDE = hash('HIDE')
+local MSG_SHOW = hash('SHOW')
+local MSG_FINALE = hash('FINALE')
+local MSG_UPDATE_TIME = hash('UPDATE_TIME')
+
+function on_message(self, message_id, message, sender)
+	if message_id == MSG_HIDE then 
+		local node = gui.get_node('scoreBox')
+		gui.set_enabled(node, false)
+		self.active = false
+	end
+	if message_id == MSG_SHOW then 
+		local node = gui.get_node('scoreBox')
+		gui.set_enabled(node, true)
+		gui.set_enabled(gui.get_node('timerBox'), false)
+		self.active = true
+	end
+	if message_id == MSG_UPDATE_TIME then 
+		gui.set_text(gui.get_node('timer'), message.time)
+		gui.set_text(gui.get_node('timer1'), message.time)
+	end
+	if message_id == MSG_FINALE then 
+		self.active = true
+		local stat = ScoreManager.getStat()
+		
+		local node = gui.get_node('score_1')
+		local node2 = gui.get_node('score_2')
+		gui.set_text(node, stat['points'])
+		gui.set_text(node2, stat['points'])
+
+		gui.set_text(gui.get_node('kill_value'), stat['kills'])
+		gui.set_text(gui.get_node('combo_value'), stat['mcombo'])
+		gui.set_text(gui.get_node('dkill_value'), stat['dkills'])
+		gui.set_text(gui.get_node('tkill_value'), stat['tkills'])
+		
+		local node = gui.get_node('scoreBox')
+		gui.set_enabled(node, true)
+	end
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	if self.active and action_id == hash("touch") and action.pressed then
+		local btnRepeat = gui.get_node('repeat_btn1')
+		if gui.pick_node(btnRepeat, action.x, action.y) then 
+			msg.post('main:/collection_manager#GameManager', 'SHOW_DEATH_GAME')
+		end
+		local btn = gui.get_node('leader_btn1')
+		if gui.pick_node(btn, action.x, action.y) then 
+			msg.post('main:/collection_manager#GameManager', 'SHOW_MAIN_MENU')
+		end
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

@@ -5,6 +5,18 @@ local points = 0
 local line_speed = 50
 local fly_speed_diff = 1
 
+local camera = require "orthographic.camera"
+local CAMERA_ID = hash('/camera')
+
+function DataManager.getBorders()
+	local viewport = camera.get_viewport(CAMERA_ID)
+	local minX = viewport.x - viewport.z/2
+	local maxX = viewport.x + viewport.z/2
+	local minY = viewport.y - viewport.w/2
+	local maxY = viewport.y + viewport.w/2
+	return minX, maxX, minY, maxY
+end
+
 function DataManager.getLineSpeed()
 	return line_speed
 end

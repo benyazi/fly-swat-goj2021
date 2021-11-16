@@ -4,6 +4,8 @@ local ACTION_TOUCH = hash('touch')
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	self.enabled = true 
+	
 	self.swatPoint = gui.get_node('swatPoint')
 	self.startPoint = vmath.vector3()
 	self.finishPoint = vmath.vector3()
@@ -24,6 +26,9 @@ function final(self)
 end
 
 function update(self, dt)
+	if self.enabled == false then 
+		return 
+	end
 	
 	if self.calculateStarted then 
 		local angle = math.atan2(self.mousePosition.x - self.startPoint.x, self.startPoint.y - self.mousePosition.y)
@@ -46,6 +51,8 @@ end
 local MSG_UPDATE_FLY_COUNT = hash('UPDATE_FLY_COUNT')
 local MSG_UPDATE_POINTS = hash('UPDATE_POINTS')
 local MSG_UPDATE_WAVE = hash('UPDATE_WAVE')
+local MSG_ENABLE = hash('ENABLE')
+local MSG_DISABLE = hash('DISABLE')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_UPDATE_FLY_COUNT then 
@@ -60,12 +67,22 @@ function on_message(self, message_id, message, sender)
 		local node = gui.get_node('wave')
 		gui.set_text(node, message.count)
 	end
+	if message_id == MSG_ENABLE then 
+		self.enabled = true
+	end
+	if message_id == MSG_DISABLE then 
+		self.enabled = false
+	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/
 	-- Remove this function if not needed
 end
 
 function releaseMouse(self)
+	if self.enabled == false then 
+		return 
+	end
+	
 	msg.post('/FlySwapForce', 'HIDE')
 	
 	local angle = math.atan2(self.mousePosition.x - self.startPoint.x, self.startPoint.y - self.mousePosition.y)
@@ -82,8 +99,15 @@ function releaseMouse(self)
 		pos = self.startPoint
 	})
 end
+
 local ACTION_GENERATE = hash('MOUSE_RIGHT')
+
 function on_input(self, action_id, action)
+
+	if self.enabled == false then 
+		return 
+	end
+	
 	local coord = vmath.vector3(action.x, action.y, 0)
 	-- coord = vmath.vector3(action.screen_x, action.screen_y, 0)
 	self.mousePosition = camera.screen_to_world(CAMERA_ID, coord)

@@ -131,26 +131,10 @@ end
 function runAwayFromSwat(self, random)
 	go.cancel_animations(go.get_id(), "position")
 	self.currentPathIndex = nil
-	
-	local dist = 800
-	local pushPos = go.get_position('/FlySwapPush')
-	if random then 
-		dist = 400
-		pushPos.x = rnd.double_range(MIX_X, MAX_X)
-		pushPos.y = rnd.double_range(MIX_Y, MAX_Y)
-	end
-	
+
 	local pos = go.get_position()
-
-	local angle = math.atan2(pos.x - pushPos.x, pushPos.y - pos.y)
-	local dx = pushPos.x - pos.x
-	local dy = pushPos.y - pos.y
-
-	angle = angle - math.rad(90)
-	local vec = vmath.vector3(dist, 0, 0)
-	local rot = vmath.quat_rotation_z(angle)
-	local vec2 = vmath.rotate(rot, vec)
-	pos = pos + vec2
+	pos = SwatManager.calculateRunAway(pos)
+	
 	generatePath(self, pos)
 	run(self)
 end
