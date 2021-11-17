@@ -49,8 +49,8 @@ function ScoreManager.setMCombo(combo)
 	end
 end
 
-function ScoreManager.setComboLevel(comboLevel)
-	comboLevel = comboLevel
+function ScoreManager.setComboLevel(level)
+	comboLevel = level
 end
 
 function ScoreManager.getStat()
