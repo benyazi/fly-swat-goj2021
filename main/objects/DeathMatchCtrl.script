@@ -35,7 +35,7 @@ end
 function updateFlyCountT(self, diff)
 	self.flyCount =  self.flyCount + diff
 	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
-
+	print('FLIES = ' .. self.flyCount)
 	if self.flyCount <= 0 then 
 		ScoreManager.addFinalTime(self.timer)
 		self.timer = nil 
@@ -50,9 +50,15 @@ local MSG_ADD_TIME = hash('ADD_TIME')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_FLY_KILLED then 
-		updateFlyCountT(self, -1)
+		-- print('FLY KILL')
+		local cnt = -1
+		if message.count ~= nil then 
+			cnt = message.count * -1
+		end
+		updateFlyCountT(self, cnt)
 	end
 	if message_id == MSG_FLY_ADDED then 
+		-- print('FLY ADD')
 		updateFlyCountT(self, 1)
 	end
 	if message_id == MSG_ADD_TIME then 

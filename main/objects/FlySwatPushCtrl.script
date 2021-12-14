@@ -79,6 +79,8 @@ function update(self, dt)
 				self.comboTimer = COMBO_TIME
 				self.comboLevel = self.comboLevel + 1
 				ScoreManager.setComboLevel(self.comboLevel)
+				msg.post('/DeathMatchManager#DeathMatchCtrl', 'FLY_KILLED', {count = count})
+				
 			else 
 				msg.post('main:/sound_effect_manager#sound_effect_manager', 'play_sound_effect', {sound = "fail"})
 				if self.comboTimer then 
