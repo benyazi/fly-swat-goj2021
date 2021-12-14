@@ -16,15 +16,24 @@ function init(self)
 		flies = 1
 	}
 	self.waveData[3] = {
-		flies = 2
+		flies = 1
 	}
 	self.waveData[4] = {
 		flies = 2
 	}
 	self.waveData[5] = {
-		flies = 3
+		flies = 2
 	}
 	self.waveData[6] = {
+		flies = 2
+	}
+	self.waveData[7] = {
+		flies = 2
+	}
+	self.waveData[8] = {
+		flies = 2
+	}
+	self.waveData[9] = {
 		flies = 3
 	}
 	
