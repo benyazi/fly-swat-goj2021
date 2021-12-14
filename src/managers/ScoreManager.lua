@@ -5,6 +5,7 @@ local points = 0
 local KILL_RATE = 10
 local DKILL_RATE = 100
 local TKILL_RATE = 400
+local FTIME_RATE = 10
 
 local kills = 0
 local dkills = 0
@@ -40,13 +41,17 @@ end
 function ScoreManager.addDKill()
 	dkills = dkills + 1
 	ScoreManager.addPoints(DKILL_RATE)
-	ScoreManager.addTime(3)
+	-- ScoreManager.addTime(3)
 end
 
 function ScoreManager.addTKill()
 	tkills = tkills + 1
 	ScoreManager.addPoints(TKILL_RATE)
 	ScoreManager.addTime(5)
+end
+
+function ScoreManager.addFinalTime(time)
+	ScoreManager.addPoints(FTIME_RATE * time)
 end
 
 function ScoreManager.addTime(time)

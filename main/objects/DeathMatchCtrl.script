@@ -37,7 +37,9 @@ function updateFlyCountT(self, diff)
 	msg.post('/swatGui#Swat', 'UPDATE_FLY_COUNT', {count = self.flyCount})
 
 	if self.flyCount <= 0 then 
-		-- newWave(self)
+		ScoreManager.addFinalTime(self.timer)
+		self.timer = nil 
+		finalRound(self)
 	end
 end
 
