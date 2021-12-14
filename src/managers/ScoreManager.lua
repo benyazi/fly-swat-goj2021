@@ -51,7 +51,7 @@ function ScoreManager.addTKill()
 end
 
 function ScoreManager.addFinalTime(time)
-	ScoreManager.addPoints(FTIME_RATE * time)
+	ScoreManager.addPoints(math.floor(FTIME_RATE * time))
 end
 
 function ScoreManager.addTime(time)
