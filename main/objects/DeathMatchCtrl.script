@@ -43,6 +43,7 @@ end
 
 local MSG_FLY_KILLED = hash('FLY_KILLED')
 local MSG_FLY_ADDED = hash('FLY_ADDED')
+local MSG_ADD_TIME = hash('ADD_TIME')
 
 
 function on_message(self, message_id, message, sender)
@@ -51,6 +52,10 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == MSG_FLY_ADDED then 
 		updateFlyCountT(self, 1)
+	end
+	if message_id == MSG_ADD_TIME then 
+		self.timer = self.timer + 5
+		msg.post('/DeathMatchManager', 'ADD_TIME', {time = 5})
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

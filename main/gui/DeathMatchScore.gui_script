@@ -1,6 +1,8 @@
 function init(self)
 	self.active = false
 	msg.post(".", "acquire_input_focus")
+	self.hideTimer = nil
+	gui.set_enabled(gui.get_node('addTimerBox'), false)
 end
 
 function final(self)
@@ -13,12 +15,21 @@ function update(self, dt)
 	-- Add update code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+	if self.hideTimer ~= nil then 
+		if self.hideTimer > 0 then 
+			self.hideTimer = self.hideTimer - dt
+		else 
+			self.hideTimer = nil
+			gui.set_enabled(gui.get_node('addTimerBox'), false)
+		end
+	end
 end
 
 local MSG_HIDE = hash('HIDE')
 local MSG_SHOW = hash('SHOW')
 local MSG_FINALE = hash('FINALE')
 local MSG_UPDATE_TIME = hash('UPDATE_TIME')
+local MSG_ADD_TIME = hash('ADD_TIME')
 
 function on_message(self, message_id, message, sender)
 	if message_id == MSG_HIDE then 
@@ -30,11 +41,18 @@ function on_message(self, message_id, message, sender)
 		local node = gui.get_node('scoreBox')
 		gui.set_enabled(node, true)
 		gui.set_enabled(gui.get_node('timerBox'), false)
+		gui.set_enabled(gui.get_node('addTimerBox'), false)
 		self.active = true
 	end
 	if message_id == MSG_UPDATE_TIME then 
 		gui.set_text(gui.get_node('timer'), message.time)
 		gui.set_text(gui.get_node('timer1'), message.time)
+	end
+	if message_id == MSG_ADD_TIME then 
+		self.hideTimer = 2
+		gui.set_text(gui.get_node('timer2'), '+ ' .. message.time)
+		gui.set_text(gui.get_node('timer3'), '+ ' .. message.time)
+		gui.set_enabled(gui.get_node('addTimerBox'), true)
 	end
 	if message_id == MSG_FINALE then 
 		self.active = true

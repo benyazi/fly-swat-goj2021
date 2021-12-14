@@ -31,6 +31,9 @@ function ScoreManager.addKill()
 	print('ADD KILL')
 	kills = kills + 1
 	ScoreManager.addPoints(KILL_RATE * (comboLevel+1))
+	if comboLevel > 4 then 
+		
+	end
 end
 
 function ScoreManager.addDKill()
