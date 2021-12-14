@@ -11,6 +11,7 @@ local dkills = 0
 local tkills = 0
 local mcombo = 0
 local comboLevel = 0
+local additionalTime = 0
 
 function ScoreManager.clear()
 	points = 0
@@ -19,31 +20,38 @@ function ScoreManager.clear()
 	tkills = 0
 	mcombo = 0
 	comboLevel = 0
+	additionalTime = 0
 end
 
 function ScoreManager.addPoints(pnts)
 	pprint(pnts)
 	points = points + pnts
-	pprint(points)
+	-- pprint(points)
 end
 
 function ScoreManager.addKill()
-	print('ADD KILL')
 	kills = kills + 1
 	ScoreManager.addPoints(KILL_RATE * (comboLevel+1))
 	if comboLevel > 4 then 
-		
+		ScoreManager.addTime(3)
 	end
 end
 
 function ScoreManager.addDKill()
 	dkills = dkills + 1
 	ScoreManager.addPoints(DKILL_RATE)
+	ScoreManager.addTime(3)
 end
 
 function ScoreManager.addTKill()
 	tkills = tkills + 1
 	ScoreManager.addPoints(TKILL_RATE)
+	ScoreManager.addTime(5)
+end
+
+function ScoreManager.addTime(time)
+	additionalTime = additionalTime + time
+	msg.post('/DeathMatchManager#DeathMatchCtrl', 'ADD_TIME', {time = time})
 end
 
 function ScoreManager.setMCombo(combo)
@@ -63,6 +71,7 @@ function ScoreManager.getStat()
 	stat['dkills'] = dkills
 	stat['tkills'] = tkills
 	stat['mcombo'] = mcombo
+	stat['atime'] = additionalTime
 	return stat
 end
 

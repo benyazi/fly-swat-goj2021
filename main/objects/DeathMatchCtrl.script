@@ -54,8 +54,12 @@ function on_message(self, message_id, message, sender)
 		updateFlyCountT(self, 1)
 	end
 	if message_id == MSG_ADD_TIME then 
+		local addTime = 5
+		if message.time ~= nil then 
+			addTime = message.time
+		end
 		self.timer = self.timer + 5
-		msg.post('/DeathMatchManager', 'ADD_TIME', {time = 5})
+		msg.post('/DeathMatchManager#DeathMatchScore', 'ADD_TIME', {time = addTime})
 	end
 	-- Add message-handling code here
 	-- Learn more: https://defold.com/manuals/message-passing/

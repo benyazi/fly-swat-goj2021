@@ -67,6 +67,7 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(gui.get_node('combo_value'), stat['mcombo'])
 		gui.set_text(gui.get_node('dkill_value'), stat['dkills'])
 		gui.set_text(gui.get_node('tkill_value'), stat['tkills'])
+		gui.set_text(gui.get_node('atime_value'), stat['atime'])
 		
 		local node = gui.get_node('scoreBox')
 		gui.set_enabled(node, true)
