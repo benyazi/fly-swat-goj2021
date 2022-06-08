@@ -173,16 +173,19 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == MSG_KILL then
 		ScoreManager.addKill()
-		self.killed = true
-		sound.stop('#sound')
-		go.cancel_animations(go.get_id(), "position")
-		sprite.play_flipbook('#sprite', hash('Fly2Died'))
-		sprite.set_vflip('#sprite', true)
-		go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
-		-- msg.post('/FlyGenerator', 'FLY_KILLED')
 		if self.home then 
 			msg.post(self.home, 'DEAR_FLY_KILLED')
 		end
+		self.killed = true
+		sound.stop('#sound')
+		go.cancel_animations(go.get_id(), "position")
+
+		local flyDied = factory.create('#factory', go.get_position())
+		destroy(self)
+		-- sprite.play_flipbook('#sprite', hash('Fly2Died'))
+		-- sprite.set_vflip('#sprite', true)
+		-- go.animate(go.get_id(), "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 1.5, 0, fly_kill_done)
+		-- msg.post('/FlyGenerator', 'FLY_KILLED')
 	end
 	if message_id == MSG_FOOD_REMOVED then
 		runAwayFromSwat(self, true)
